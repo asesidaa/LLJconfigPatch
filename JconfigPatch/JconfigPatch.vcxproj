@@ -78,7 +78,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <TargetName>winhttp</TargetName>
+    <TargetName>S6145-5Husb</TargetName>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);libs/MinHook/include</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -117,6 +117,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ModuleDefinitionFile>dll.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -164,7 +165,6 @@
     <ClCompile Include="libs\MinHook\src\hde\hde64.c" />
     <ClCompile Include="libs\MinHook\src\hook.c" />
     <ClCompile Include="libs\MinHook\src\trampoline.c" />
-    <ClCompile Include="winhttp.dll.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="libs\MinHook\include\MinHook.h" />
@@ -175,6 +175,9 @@
     <ClInclude Include="libs\MinHook\src\hde\table32.h" />
     <ClInclude Include="libs\MinHook\src\hde\table64.h" />
     <ClInclude Include="libs\MinHook\src\trampoline.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="dll.def" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

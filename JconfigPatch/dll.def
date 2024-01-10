@@ -1,0 +1,32 @@
+LIBRARY S6145-5Husb
+EXPORTS
+    chcusb_MakeThread = chcusb_status @1
+    chcusb_open = chcusb_status @2
+    chcusb_close = chcusb_universal_command @3
+    chcusb_ReleaseThread = chcusb_universal_command @4
+    chcusb_listupPrinter = chcusb_status @5
+    chcusb_listupPrinterSN = chcusb_universal_command @6
+    chcusb_selectPrinter = chcusb_status @7
+    chcusb_selectPrinterSN = chcusb_universal_command @8
+    chcusb_getPrinterInfo = chcusb_universal_command @9
+    chcusb_imageformat @10
+    chcusb_setmtf = chcusb_universal_command @11
+    chcusb_makeGamma = chcusb_universal_command @12
+    chcusb_setIcctable @13
+    chcusb_copies = chcusb_universal_command @14
+    chcusb_status @15
+    chcusb_statusAll = chcusb_universal_command @16
+    chcusb_startpage @17
+    chcusb_endpage @18
+    chcusb_write @20
+    chcusb_setPrinterInfo @21
+    chcusb_getGamma = chcusb_universal_command @22
+    chcusb_getMtf @23
+    chcusb_cancelCopies = chcusb_universal_command @24
+    chcusb_setPrinterToneCurve = chcusb_universal_command @25
+    chcusb_getPrinterToneCurve = chcusb_universal_command @26
+    chcusb_blinkLED = chcusb_universal_command @27
+    chcusb_resetPrinter = chcusb_universal_command @28
+    chcusb_AttachThreadCount = chcusb_universal_command @31
+    chcusb_getPrintIDStatus @32
+    chcusb_universal_command @73
