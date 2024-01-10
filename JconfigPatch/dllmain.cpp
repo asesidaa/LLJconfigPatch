@@ -2,6 +2,7 @@
 #include "MinHook.h"
 #include "winusb.h"
 #include <array>
+#include <chrono>
 #include <format>
 #include <fstream>
 #include <vector>
@@ -126,12 +127,36 @@ int64_t __fastcall chcusb_endpage(WORD *a1)
     return 1;
 }
 
+std::string createUniqueFileName(const std::string& baseName, const std::string &extension) {
+    // Get the current time point
+    auto now = std::chrono::system_clock::now();
+
+    // Convert it to a time_t object
+    auto now_c = std::chrono::system_clock::to_time_t(now);
+
+    // Convert it to tm struct
+    std::tm now_tm;
+    localtime_s(&now_tm, &now_c);
+
+    // Get the number of milliseconds since the last second
+    auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
+
+    // Use stringstream to format the file name
+    std::stringstream ss;
+    ss << baseName << "_"
+       << std::put_time(&now_tm, "%Y%m%d_%H%M%S") // format: YYYYMMDD_HHMMSS
+       << '_' << std::setfill('0') << std::setw(3) << milliseconds.count()
+       << '.' << extension;
+
+    return ss.str();
+}
+
 int64_t __fastcall chcusb_write(void *data, unsigned int *size, WORD *returnCode)
 {
     OutputDebugStringA(std::format("Printing image, height: {}, width: {}", height, width).c_str());
     // Now adding code to dump the data to a file
-    const std::string filename = "output_image.bmp";
-    std::ofstream file(filename, std::ios::out | std::ios::binary);
+    std::string filename = createUniqueFileName("output_image", "bmp");
+    std::ofstream file("printSave/"+filename, std::ios::out | std::ios::binary);
     if (!file) {
         // Handle file open error
         OutputDebugStringA("Failed to open file");
@@ -213,20 +238,22 @@ int64_t __fastcall chcusb_getPrintIDStatus(int16_t printId, BYTE *a2, WORD *retu
 
 void Init()
 {
+    // If folder "printSave" does not exist, create it
+    CreateDirectoryA("printSave", nullptr);
+    MH_Initialize();
+    
     LoadLibraryA("jconfig.dll");
     const auto handle = reinterpret_cast<char*>(GetModuleHandleA("jconfig.dll"));
-    if (handle == INVALID_HANDLE_VALUE)
+    if (handle != INVALID_HANDLE_VALUE)
     {
-        OutputDebugStringA("GetModuleHandleA failed");
+        OutputDebugStringA(std::format("Handle address: 0x{:X}", (unsigned long long)handle).c_str());
+        auto status = MH_CreateHook(handle+0x9010, WinUsb_ReadPipe_Wrap, reinterpret_cast<LPVOID*>(&gOrigWinUsb_ReadPipe));
+        if (status != MH_OK)
+        {
+            OutputDebugStringA(std::format("MH_CreateHook failed, reason: {}", MH_StatusToString(status)).c_str());
+        }
     }
-    OutputDebugStringA(std::format("Handle address: 0x{:X}", (unsigned long long)handle).c_str());
-
-    MH_Initialize();
-    auto status = MH_CreateHook(handle+0x9010, WinUsb_ReadPipe_Wrap, reinterpret_cast<LPVOID*>(&gOrigWinUsb_ReadPipe));
-    if (status != MH_OK)
-    {
-        OutputDebugStringA(std::format("MH_CreateHook failed, error: {:X}", (int)status).c_str());
-    }
+    
     const auto gameHandle = reinterpret_cast<uintptr_t>(GetModuleHandle(nullptr));
     uintptr_t offset = 0x14023AAC0 - 0x140000000;
     MH_CreateHook((LPVOID)(gameHandle + offset), getPrinterStatusHook, nullptr);
