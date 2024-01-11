@@ -160,6 +160,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="printerFuncs.cpp" />
     <ClCompile Include="libs\MinHook\src\buffer.c" />
     <ClCompile Include="libs\MinHook\src\hde\hde32.c" />
     <ClCompile Include="libs\MinHook\src\hde\hde64.c" />
